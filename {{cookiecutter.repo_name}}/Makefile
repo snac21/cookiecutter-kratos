@@ -68,3 +68,16 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
+
+.PHONY: stop
+# stop kratos service 替换成自己的port,默认8000
+stop:
+	@echo "Stopping kratos service..."
+	@if [ "$(shell lsof -i :8000 -t)" != "" ]; then \
+		echo "Found process on port 8000, killing it..."; \
+		kill -9 $(shell lsof -i :8000 -t); \
+		echo "Service stopped."; \
+	else \
+		echo "No process found on port 8000."; \
+	fi
+
