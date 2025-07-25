@@ -23,3 +23,9 @@ source ~/.zshrc
 ```bash
 cookiecutter ./cookiecutter-kratos --output-dir .
 ```
+
+### 4 赋予权限
+```bash
+chmod  -R 777 ./model-name    
+```
+
