@@ -71,6 +71,7 @@ help:
 
 .PHONY: stop
 # stop kratos service 替换成自己的port,默认8000
+# lsof -ti :8060 | xargs kill -9
 stop:
 	@echo "Stopping kratos service..."
 	@if [ "$(shell lsof -i :8000 -t)" != "" ]; then \

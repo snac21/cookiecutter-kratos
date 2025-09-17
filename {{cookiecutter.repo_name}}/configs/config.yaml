@@ -13,3 +13,12 @@ data:
     addr: 127.0.0.1:6379
     read_timeout: 0.2s
     write_timeout: 0.2s
+log:
+  level: info
+  filename: ./log/caller.log
+  max_size: 10
+  max_age: 30
+  max_backups: 5
+  compress: true
+  console: true
+  format: json

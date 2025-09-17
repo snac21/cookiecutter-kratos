@@ -21,6 +21,7 @@ func New{{cookiecutter.service_name}}Repo(data *Data, logger log.Logger) biz.{{c
 }
 
 func (r *{{cookiecutter.file_name}}Repo) Save(ctx context.Context, g *biz.{{cookiecutter.service_name}}) (*biz.{{cookiecutter.service_name}}, error) {
+	r.log.WithContext(ctx).Infof("Save: %v", g.Hello)
 	return g, nil
 }
 

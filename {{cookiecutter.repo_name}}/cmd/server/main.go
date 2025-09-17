@@ -4,7 +4,6 @@ import (
 	"flag"
 	"os"
 
-	"{{cookiecutter.module_name}}/internal/conf"
 	"github.com/go-kratos/kratos/v2"
 	"github.com/go-kratos/kratos/v2/config"
 	"github.com/go-kratos/kratos/v2/config/file"
@@ -12,14 +11,16 @@ import (
 	"github.com/go-kratos/kratos/v2/middleware/tracing"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 	"github.com/go-kratos/kratos/v2/transport/http"
+	"{{cookiecutter.module_name}}/internal/conf"
+	pkglog "{{cookiecutter.module_name}}/internal/pkg/log"
 )
 
 // go build -ldflags "-X main.Version=x.y.z"
 var (
 	// Name is the name of the compiled software.
-	Name string
+	Name string = "{{cookiecutter.service_name}}"
 	// Version is the version of the compiled software.
-	Version string
+	Version string = "1.0.0"
 	// flagconf is the config flag.
 	flagconf string
 
@@ -46,15 +47,8 @@ func newApp(logger log.Logger, hs *http.Server, gs *grpc.Server) *kratos.App {
 
 func main() {
 	flag.Parse()
-	logger := log.With(log.NewStdLogger(os.Stdout),
-		"ts", log.DefaultTimestamp,
-		"caller", log.DefaultCaller,
-		"service.id", id,
-		"service.name", Name,
-		"service.version", Version,
-		"trace.id", tracing.TraceID(),
-		"span.id", tracing.SpanID(),
-	)
+
+	// 加载配置
 	c := config.New(
 		config.WithSource(
 			file.NewSource(flagconf),
@@ -70,6 +64,26 @@ func main() {
 	if err := c.Scan(&bc); err != nil {
 		panic(err)
 	}
+
+	// 初始化日志器
+	var baseLogger log.Logger
+	if bc.Log != nil {
+		baseLogger = pkglog.NewLogger(bc.Log)
+	} else {
+		// 如果没有配置日志，使用默认的标准输出
+		baseLogger = log.NewStdLogger(os.Stdout)
+	}
+
+	logger := log.With(baseLogger,
+		// 使用zap的时间
+		// "ts", log.DefaultTimestamp,
+		"caller", log.DefaultCaller,
+		"service.id", id,
+		"service.name", Name,
+		"service.version", Version,
+		"trace.id", tracing.TraceID(),
+		"span.id", tracing.SpanID(),
+	)
 
 	app, cleanup, err := wireApp(bc.Server, bc.Data, logger)
 	if err != nil {

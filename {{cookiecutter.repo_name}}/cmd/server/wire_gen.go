@@ -25,7 +25,7 @@ func wireApp(confServer *conf.Server, confData *conf.Data, logger log.Logger) (*
 	}
 	{{cookiecutter.repo_name}}Repo := data.New{{cookiecutter.service_name}}Repo(dataData, logger)
 	{{cookiecutter.repo_name}}Usecase := biz.New{{cookiecutter.service_name}}Usecase({{cookiecutter.repo_name}}Repo, logger)
-	{{cookiecutter.repo_name}}Service := service.New{{cookiecutter.service_name}}Service({{cookiecutter.repo_name}}Usecase)
+	{{cookiecutter.repo_name}}Service := service.New{{cookiecutter.service_name}}Service({{cookiecutter.repo_name}}Usecase, logger)
 	httpServer := server.NewHTTPServer(confServer, {{cookiecutter.repo_name}}Service, logger)
 	grpcServer := server.NewGRPCServer(confServer, {{cookiecutter.repo_name}}Service, logger)
 	app := newApp(logger, httpServer, grpcServer)
