@@ -1,6 +1,6 @@
 {
     "repo_name": "greeter",
     "service_name": "Greeter",
-    "file_name": "greeter",
+    "file_name": "fileName",
     "module_name": "github.com/go-kratos/kratos-layout"
 }

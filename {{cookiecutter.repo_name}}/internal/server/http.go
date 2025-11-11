@@ -10,7 +10,7 @@ import (
 )
 
 // NewHTTPServer new a HTTP server.
-func NewHTTPServer(c *conf.Server, {{cookiecutter.repo_name}} *service.{{cookiecutter.service_name}}Service, logger log.Logger) *http.Server {
+func NewHTTPServer(c *conf.Server, {{cookiecutter.service_name}} *service.{{cookiecutter.service_name}}Service, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
 			recovery.Recovery(),
@@ -26,6 +26,6 @@ func NewHTTPServer(c *conf.Server, {{cookiecutter.repo_name}} *service.{{cookiec
 		opts = append(opts, http.Timeout(c.Http.Timeout.AsDuration()))
 	}
 	srv := http.NewServer(opts...)
-	v1.Register{{cookiecutter.service_name}}HTTPServer(srv, {{cookiecutter.repo_name}})
+	v1.Register{{cookiecutter.service_name}}HTTPServer(srv, {{cookiecutter.service_name}})
 	return srv
 }

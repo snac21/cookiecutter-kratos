@@ -14,7 +14,8 @@ service {{cookiecutter.service_name}} {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply) {
     option (google.api.http) = {
-      get: "/{{cookiecutter.file_name}}/{name}"
+      post: "/api/list"
+      body: "*"
     };
   }
 }

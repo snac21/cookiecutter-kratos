@@ -15,7 +15,7 @@ data:
     write_timeout: 0.2s
 log:
   level: info
-  filename: ./log/caller.log
+  filename: ./log/{{cookiecutter.file_name}}.log
   max_size: 10
   max_age: 30
   max_backups: 5
