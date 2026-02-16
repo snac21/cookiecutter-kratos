@@ -2,6 +2,8 @@ GOPATH:=$(shell go env GOPATH)
 VERSION=$(shell git describe --tags --always)
 INTERNAL_PROTO_FILES=$(shell find internal -name *.proto)
 API_PROTO_FILES=$(shell find api -name *.proto)
+APP_NAME=$(shell basename `go list -m`)
+HTTP_PORT?=8000
 
 .PHONY: init
 # init env
@@ -50,6 +52,30 @@ all:
 	make config;
 	make generate;
 
+.PHONY: run
+# run kratos service
+run: build
+	@echo "Running $(APP_NAME)..."
+	@nohup ./bin/$(APP_NAME) -conf ./configs > bin/$(APP_NAME).log 2>&1 & echo $$! > bin/$(APP_NAME).pid
+	@echo "Service started, PID: $$(cat bin/$(APP_NAME).pid)"
+
+.PHONY: stop
+# stop kratos service
+stop:
+	@echo "Stopping $(APP_NAME)..."
+	@if [ -f bin/$(APP_NAME).pid ]; then \
+		PID=$$(cat bin/$(APP_NAME).pid); \
+		echo "Found pid file, killing process $$PID..."; \
+		kill $$PID || true; \
+		rm bin/$(APP_NAME).pid; \
+	elif [ "$$(lsof -i :$(HTTP_PORT) -t)" != "" ]; then \
+		PID=$$(lsof -i :$(HTTP_PORT) -t); \
+		echo "No pid file found, but found process on port $(HTTP_PORT), killing $$PID..."; \
+		kill $$PID || true; \
+	else \
+		echo "No process found by pid file or port $(HTTP_PORT)."; \
+	fi
+
 # show help
 help:
 	@echo ''
@@ -68,17 +94,3 @@ help:
 	{ lastLine = $$0 }' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
-
-.PHONY: stop
-# stop kratos service 替换成自己的port,默认8000
-# lsof -ti :8060 | xargs kill -9
-stop:
-	@echo "Stopping kratos service..."
-	@if [ "$(shell lsof -i :8000 -t)" != "" ]; then \
-		echo "Found process on port 8000, killing it..."; \
-		kill -9 $(shell lsof -i :8000 -t); \
-		echo "Service stopped."; \
-	else \
-		echo "No process found on port 8000."; \
-	fi
-
